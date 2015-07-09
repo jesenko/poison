@@ -1,6 +1,19 @@
 defmodule EncoderBench do
   use Benchfella
 
+  # Structs
+  bench "structs (Poison)", [struct: gen_struct] do
+    Poison.encode!(struct)
+  end
+
+  bench "structs (JSX)", [struct: gen_struct] do
+    JSX.encode!(struct)
+  end
+
+  bench "structs (Jazz)", [struct: gen_struct] do
+    Jazz.encode!(struct)
+  end
+
   # Lists
   bench "lists (Poison)", [list: gen_list] do
     Poison.encode!(list)
@@ -99,5 +112,13 @@ defmodule EncoderBench do
 
   defp gen_data do
     File.read!(Path.expand("data/generated.json", __DIR__)) |> Poison.decode!
+  end
+
+  defmodule TheStruct do
+    defstruct name: "John", age: 27
+  end
+
+  defp gen_struct do
+    1..10 |> Enum.map(&(%TheStruct{name: "John#{&1}", age: &1 }))
   end
 end
